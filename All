@@ -1,0 +1,36 @@
+-- Define a function to fling a player
+local function flingPlayer(player)
+    -- Check if the player is still connected
+    if player and player.Character then
+        local character = player.Character
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            -- Calculate a random direction to fling the player
+            local flingDirection = Vector3.new(math.random(-10, 10), math.random(10, 20), math.random(-10, 10))
+            
+            -- Apply fling force
+            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+            humanoid:Move(flingDirection)
+            
+            -- Reset after a short delay
+            wait(0.5)
+            humanoid:Move(Vector3.new(0, 0, 0)) -- Stop movement
+            humanoid:ChangeState(Enum.HumanoidStateType.Seated) -- Reset state to seated
+        end
+    end
+end
+
+-- Function to fling all players in the game
+local function flingAllPlayers()
+    local players = game:GetService("Players"):GetPlayers()
+    for _, player in ipairs(players) do
+        flingPlayer(player)
+    end
+end
+
+-- Activate flinging (for example, bind to a key press)
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F then
+        flingAllPlayers()
+    end
+end)
